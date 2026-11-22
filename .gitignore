@@ -1,0 +1,8 @@
+target/
+.idea/
+*.iml
+*.log
+.vscode/
+
+# Credenciales del correo (nunca subir)
+correo.local.properties

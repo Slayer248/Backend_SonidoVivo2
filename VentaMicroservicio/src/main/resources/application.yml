@@ -1,0 +1,58 @@
+server:
+  port: 8088
+  forward-headers-strategy: framework
+
+spring:
+  config:
+    import:
+      # Credenciales del correo: archivo local que NO se sube a git (ver correo.local.properties.example)
+      - optional:file:./correo.local.properties
+      - optional:file:../correo.local.properties
+  application:
+    name: venta-microservicio
+  datasource:
+    url: jdbc:mysql://localhost:3306/sonidovivo_ventas?createDatabaseIfNotExist=true&serverTimezone=UTC
+    username: root
+    password: ""
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail.smtp.auth: ${MAIL_AUTH:true}
+      mail.smtp.starttls.enable: ${MAIL_STARTTLS:true}
+      mail.smtp.connectiontimeout: 5000
+      mail.smtp.timeout: 5000
+      mail.smtp.writetimeout: 5000
+  flyway:
+    enabled: true
+    # Bases que ya existían (creadas por Hibernate) se toman como punto de partida y se completan con las migraciones
+    baseline-on-migrate: true
+    baseline-version: "0"
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+  web:
+    error:
+      include-message: always
+  cloud:
+    compatibility-verifier:
+      enabled: false
+
+productos:
+  service:
+    url: http://localhost:8083
+
+pedidos:
+  service:
+    url: http://localhost:8087
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    status-page-url-path: /swagger-ui.html

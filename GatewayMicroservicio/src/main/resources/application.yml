@@ -1,0 +1,153 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway-microservicio
+  cloud:
+    compatibility-verifier:
+      enabled: false
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            # Orígenes permitidos (separados por coma). En producción: CORS_ORIGINS=https://tu-dominio
+            allowedOriginPatterns: ${CORS_ORIGINS:http://localhost:*,http://127.0.0.1:*}
+            allowedMethods: "*"
+            allowedHeaders: "*"
+      routes:
+        - id: roles-ms
+          uri: lb://ROL-MICROSERVICIO
+          predicates:
+            - Path=/api/roles/**
+
+        - id: usuarios-ms
+          uri: lb://USUARIO-MICROSERVICIO
+          predicates:
+            - Path=/api/usuarios/**
+
+        - id: productos-ms
+          uri: lb://PRODUCTO-MICROSERVICIO
+          predicates:
+            - Path=/api/productos/**
+
+        - id: servicios-ms
+          uri: lb://SERVICIO-MICROSERVICIO
+          predicates:
+            - Path=/api/servicios/**
+
+        - id: novedades-ms
+          uri: lb://NOVEDAD-MICROSERVICIO
+          predicates:
+            - Path=/api/novedades/**
+
+        - id: puntos-retiro-ms
+          uri: lb://PUNTO-RETIRO-MICROSERVICIO
+          predicates:
+            - Path=/api/puntos-retiro/**
+
+        - id: pedidos-ms
+          uri: lb://PEDIDO-MICROSERVICIO
+          predicates:
+            - Path=/api/pedidos/**
+
+        - id: ventas-ms
+          uri: lb://VENTA-MICROSERVICIO
+          predicates:
+            - Path=/api/ventas/**
+
+        - id: roles-docs
+          uri: lb://ROL-MICROSERVICIO
+          predicates:
+            - Path=/docs/roles/v3/api-docs/**
+          filters:
+            - RewritePath=/docs/roles/v3/api-docs(?<segment>/?.*), /v3/api-docs$\{segment}
+
+        - id: usuarios-docs
+          uri: lb://USUARIO-MICROSERVICIO
+          predicates:
+            - Path=/docs/usuarios/v3/api-docs/**
+          filters:
+            - RewritePath=/docs/usuarios/v3/api-docs(?<segment>/?.*), /v3/api-docs$\{segment}
+
+        - id: productos-docs
+          uri: lb://PRODUCTO-MICROSERVICIO
+          predicates:
+            - Path=/docs/productos/v3/api-docs/**
+          filters:
+            - RewritePath=/docs/productos/v3/api-docs(?<segment>/?.*), /v3/api-docs$\{segment}
+
+        - id: servicios-docs
+          uri: lb://SERVICIO-MICROSERVICIO
+          predicates:
+            - Path=/docs/servicios/v3/api-docs/**
+          filters:
+            - RewritePath=/docs/servicios/v3/api-docs(?<segment>/?.*), /v3/api-docs$\{segment}
+
+        - id: novedades-docs
+          uri: lb://NOVEDAD-MICROSERVICIO
+          predicates:
+            - Path=/docs/novedades/v3/api-docs/**
+          filters:
+            - RewritePath=/docs/novedades/v3/api-docs(?<segment>/?.*), /v3/api-docs$\{segment}
+
+        - id: puntos-retiro-docs
+          uri: lb://PUNTO-RETIRO-MICROSERVICIO
+          predicates:
+            - Path=/docs/puntos-retiro/v3/api-docs/**
+          filters:
+            - RewritePath=/docs/puntos-retiro/v3/api-docs(?<segment>/?.*), /v3/api-docs$\{segment}
+
+        - id: pedidos-docs
+          uri: lb://PEDIDO-MICROSERVICIO
+          predicates:
+            - Path=/docs/pedidos/v3/api-docs/**
+          filters:
+            - RewritePath=/docs/pedidos/v3/api-docs(?<segment>/?.*), /v3/api-docs$\{segment}
+
+        - id: ventas-docs
+          uri: lb://VENTA-MICROSERVICIO
+          predicates:
+            - Path=/docs/ventas/v3/api-docs/**
+          filters:
+            - RewritePath=/docs/ventas/v3/api-docs(?<segment>/?.*), /v3/api-docs$\{segment}
+
+jwt:
+  secret: ${JWT_SECRET:sonidovivo-secreto-de-desarrollo-cambiar-en-produccion-0123456789}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    urls:
+      - name: Roles
+        url: /docs/roles/v3/api-docs
+      - name: Usuarios
+        url: /docs/usuarios/v3/api-docs
+      - name: Productos
+        url: /docs/productos/v3/api-docs
+      - name: Servicios
+        url: /docs/servicios/v3/api-docs
+      - name: Novedades
+        url: /docs/novedades/v3/api-docs
+      - name: Puntos Retiro
+        url: /docs/puntos-retiro/v3/api-docs
+      - name: Pedidos
+        url: /docs/pedidos/v3/api-docs
+      - name: Ventas
+        url: /docs/ventas/v3/api-docs
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

@@ -1,0 +1,42 @@
+server:
+  port: 8087
+  forward-headers-strategy: framework
+
+spring:
+  application:
+    name: pedido-microservicio
+  datasource:
+    url: jdbc:mysql://localhost:3306/sonidovivo_pedidos?createDatabaseIfNotExist=true&serverTimezone=UTC
+    username: root
+    password: ""
+  flyway:
+    enabled: true
+    # Bases que ya existían (creadas por Hibernate) se toman como punto de partida y se completan con las migraciones
+    baseline-on-migrate: true
+    baseline-version: "0"
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+  web:
+    error:
+      include-message: always
+  cloud:
+    compatibility-verifier:
+      enabled: false
+
+productos:
+  service:
+    url: http://localhost:8083
+
+puntos-retiro:
+  service:
+    url: http://localhost:8086
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    status-page-url-path: /swagger-ui.html
