@@ -1,9 +1,7 @@
 @echo off
 REM Levanta todos los microservicios en el orden correcto (necesita Java 21 y MySQL de Laragon encendido).
 cd /d "%~dp0"
-REM Usa siempre el JDK 21 (los otros JDK instalados en este PC son más antiguos).
-set "JAVA_HOME=C:\Users\crist\.jdks\ms-21.0.12.1"
-set "PATH=%JAVA_HOME%\bin;%PATH%"
+REM Necesita Java 21: la variable de entorno JAVA_HOME debe apuntar a un JDK 21 (ver README).
 start "Eureka" cmd /k "cd EurekaMicroservicio && mvnw.cmd spring-boot:run"
 timeout /t 25 /nobreak >nul
 start "Rol" cmd /k "cd RolMicroservicio && mvnw.cmd spring-boot:run"
