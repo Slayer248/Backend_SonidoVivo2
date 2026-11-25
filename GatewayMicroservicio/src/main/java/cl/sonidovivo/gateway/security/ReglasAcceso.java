@@ -57,6 +57,10 @@ final class ReglasAcceso {
         if (ruta.startsWith("/api/roles")) return SOLO_ADMIN;
 
         if (ruta.startsWith("/api/usuarios")) {
+            // Renovar el propio token: cualquier persona con sesión (el servicio vuelve a verificar el token)
+            if (HttpMethod.POST.equals(m) && (ruta.equals("/api/usuarios/renovar-token") || ruta.equals("/api/usuarios/renovar-token/"))) {
+                return null;
+            }
             var propio = USUARIO_POR_ID.matcher(ruta);
             if (propio.matches() && propio.group(1).equals(usuarioId)
                     && (lectura(m) || HttpMethod.PUT.equals(m))) {

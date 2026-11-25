@@ -68,6 +68,8 @@ El precio lo toma el servidor desde Productos (IVA 19% incluido, se separa neto 
 
 El login (`POST /api/usuarios/login`) devuelve el usuario con un campo `token` (JWT, vence en 8 horas). El front lo envía en cada petición como `Authorization: Bearer <token>`. El Gateway lo valida y aplica las reglas antes de reenviar la petición, y entrega a los microservicios los encabezados `X-Usuario-Id`, `X-Usuario-Rol` y `X-Admin-Id` (los que mande el cliente se descartan).
 
+Antes de que venza, el front lo renueva con `POST /api/usuarios/renovar-token` (enviando el token vigente): el servicio verifica la firma y el vencimiento, vuelve a leer la cuenta (así toma el rol actual y una cuenta bloqueada o con contraseña temporal no puede renovar) y entrega un token nuevo de 8 horas. Un token vencido no se puede renovar: hay que iniciar sesión otra vez.
+
 | Ruta | Quién puede usarla |
 |---|---|
 | Login, registro, `GET` de productos, novedades, servicios y puntos de retiro, enviar consulta de contacto (si trae sesión, el mensaje queda asociado a su cuenta), Swagger | Público |
@@ -75,6 +77,7 @@ El login (`POST /api/usuarios/login`) devuelve el usuario con un campo `token` (
 | Leer todas las consultas de contacto, responderlas, listado de todos los pedidos, crear pedidos directamente, cambiar estado de pedido, listado y resumen de ventas | Administrador y Vendedor |
 | Crear, editar o borrar productos, novedades, servicios y puntos de retiro | Administrador |
 | `/api/roles` y `/api/usuarios` (listar, crear, cambiar rol, bloquear) | Administrador |
+| Renovar el propio token (`POST /api/usuarios/renovar-token`) | Cualquier usuario con sesión |
 | Ver o editar la propia cuenta y cambiar la propia contraseña | Cada usuario (solo la suya; un no administrador no puede cambiar su rol) |
 
 Sin token responde 401; con un rol sin permiso, 403.

@@ -46,6 +46,14 @@ class ReglasAccesoTest {
     }
 
     @Test
+    void cualquierPersonaConSesionPuedeRenovarSuToken() {
+        assertFalse(ReglasAcceso.esPublica(HttpMethod.POST, "/api/usuarios/renovar-token")); // exige token
+        assertNull(ReglasAcceso.rolesPermitidos(HttpMethod.POST, "/api/usuarios/renovar-token", "5"));
+        // con contraseña temporal solo se permite cambiarla, no renovar
+        assertFalse(ReglasAcceso.permitidaConContrasenaTemporal(HttpMethod.POST, "/api/usuarios/renovar-token", "5"));
+    }
+
+    @Test
     void catalogoSoloSeEscribeComoAdministrador() {
         for (String ruta : new String[]{"/api/productos", "/api/productos/3", "/api/novedades", "/api/servicios", "/api/puntos-retiro"}) {
             assertEquals(java.util.Set.of("Administrador"), ReglasAcceso.rolesPermitidos(HttpMethod.POST, ruta, "1"), ruta);

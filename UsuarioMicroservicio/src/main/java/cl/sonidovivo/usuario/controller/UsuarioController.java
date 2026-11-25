@@ -23,6 +23,15 @@ public class UsuarioController {
         return usuarioService.login(datos);
     }
 
+    @Operation(summary = "Renovar token",
+            description = "Con un token vigente (encabezado Authorization: Bearer <token>) entrega los datos del usuario "
+                    + "con un token nuevo que vence en 8 horas y lleva su rol actual. "
+                    + "401 si el token venció o no es válido; 403 si la cuenta está bloqueada o debe cambiar su contraseña temporal.")
+    @PostMapping("/renovar-token")
+    public UsuarioResponse renovarToken(@RequestHeader(value = "Authorization", required = false) String authorization) {
+        return usuarioService.renovarToken(authorization);
+    }
+
     @Operation(summary = "Registro público de cliente", description = "Crea un usuario con rol Cliente (formulario de registro del front).")
     @PostMapping("/registro")
     @ResponseStatus(HttpStatus.CREATED)

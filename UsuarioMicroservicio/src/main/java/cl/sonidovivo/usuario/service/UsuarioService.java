@@ -57,6 +57,30 @@ public class UsuarioService {
                 Boolean.TRUE.equals(u.getDebeCambiarContrasena())));
     }
 
+    /**
+     * Renovación del token: con un token todavía vigente entrega uno nuevo, con el vencimiento renovado.
+     * El usuario se vuelve a leer desde la base de datos, así el nuevo token lleva su rol actual
+     * y una cuenta bloqueada (o con contraseña temporal) no puede seguir renovando su sesión.
+     */
+    public UsuarioResponse renovarToken(String authorization) {
+        String token = authorization != null && authorization.startsWith("Bearer ")
+                ? authorization.substring(7).trim() : null;
+        JwtUtil.DatosToken datos = JwtUtil.verificar(token, jwtSecret);
+        if (datos == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Tu sesión expiró o no es válida. Inicia sesión nuevamente");
+        }
+        Usuario u = usuarioRepository.findById(datos.usuarioId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Tu sesión expiró o no es válida. Inicia sesión nuevamente"));
+        if (Boolean.TRUE.equals(u.getBloqueado())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Tu cuenta se encuentra bloqueada. Contacta al administrador.");
+        }
+        if (Boolean.TRUE.equals(u.getDebeCambiarContrasena())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Debes cambiar tu contraseña temporal antes de continuar");
+        }
+        UsuarioResponse r = respuesta(u);
+        return r.conToken(JwtUtil.crear(u.getId(), r.rol(), u.getCorreo(), jwtExpiracion, jwtSecret));
+    }
+
     public List<UsuarioResponse> listar(String buscar, Long rolId) {
         Map<Long, String> roles = rolClient.obtenerMapaRoles();
         String filtro = buscar == null ? "" : buscar.trim().toLowerCase();
