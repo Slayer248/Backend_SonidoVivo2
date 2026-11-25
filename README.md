@@ -37,6 +37,7 @@ no coincide con las tablas, el servicio no arranca y dice qué columna falta.
 
 ## Cómo levantarlo
 
+0. Instala el **JDK 21** y define la variable de entorno `JAVA_HOME` apuntando a su carpeta (la que contiene `bin`).
 1. Enciende MySQL en Laragon.
 2. Ejecuta `iniciar-todo.bat`, o levanta a mano con `mvnw.cmd spring-boot:run` en este orden:
    Eureka → Rol → Usuario / Producto / Servicio / Novedad / PuntoRetiro → Pedido → Venta → Gateway.
