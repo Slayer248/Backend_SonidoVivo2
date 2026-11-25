@@ -1,6 +1,7 @@
 package cl.sonidovivo.usuario.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,11 +25,11 @@ public class UsuarioController {
     }
 
     @Operation(summary = "Renovar token",
-            description = "Con un token vigente (encabezado Authorization: Bearer <token>) entrega los datos del usuario "
+            description = "Con un token vigente (en Swagger: botón Authorize) entrega los datos del usuario "
                     + "con un token nuevo que vence en 8 horas y lleva su rol actual. "
                     + "401 si el token venció o no es válido; 403 si la cuenta está bloqueada o debe cambiar su contraseña temporal.")
     @PostMapping("/renovar-token")
-    public UsuarioResponse renovarToken(@RequestHeader(value = "Authorization", required = false) String authorization) {
+    public UsuarioResponse renovarToken(@Parameter(hidden = true) @RequestHeader(value = "Authorization", required = false) String authorization) {
         return usuarioService.renovarToken(authorization);
     }
 
